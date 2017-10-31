@@ -37,7 +37,7 @@ class TimeSystem:
         
     def _pop_line(self, line):
         if isinstance(line, int):
-            if line not in self.lines.keys():
+            if line not in self.lines:
                 return False
             line = self.lines[line]
         
@@ -47,14 +47,10 @@ class TimeSystem:
         return True
 
     def get_line(self, iid):
-        if iid not in self.lines.keys():
-            return None
-        return self.lines[iid]
+        return self.lines.get(iid, None)
     
     def get_user_lines(self, chat_id):
-        if chat_id in self.user_lines:
-            return self.user_lines[chat_id]
-        return []
+        return self.user_lines.get(chat_id, [])
     
     def register_line(self, chat_id, frequency, message):
         self.max_internal_id += 1
