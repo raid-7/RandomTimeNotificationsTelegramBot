@@ -1,4 +1,5 @@
 import telebot
+import math
 import threading
 import time
 import internal as feat
@@ -100,8 +101,26 @@ def start_polling():
 polling_thread = threading.Thread(target=start_polling)
 polling_thread.start()
 
+
+start_time = time.time()
+times_processed = 0
+
+def check_need_delay(real, expected):
+    return real - expected > -5
+
+def limit_process_frequency():
+    global times_processed, start_time
+    up_time = time.time() - start_time
+    expected_times_processed = math.floor(up_time / PROCESS_INTERVAL)
+    
+    while check_need_delay(times_processed, expected_times_processed):
+        time.sleep(PROCESS_INTERVAL)
+    
+    times_processed += 1
+
+
 while allow_work:
-    time.sleep(PROCESS_INTERVAL)
+    limit_process_frequency()
     lines = timesys.process()
     
     for line in lines:
