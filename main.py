@@ -105,15 +105,16 @@ polling_thread.start()
 start_time = time.time()
 times_processed = 0
 
-def check_need_delay(real, expected):
-    return real - expected > -5
-
-def limit_process_frequency():
+def check_need_delay():
     global times_processed, start_time
     up_time = time.time() - start_time
     expected_times_processed = math.floor(up_time / PROCESS_INTERVAL)
+    return times_processed - expected_times_processed > -2
+
+def limit_process_frequency():
+    global times_processed, allow_work
     
-    while check_need_delay(times_processed, expected_times_processed):
+    while check_need_delay() and allow_work:
         time.sleep(PROCESS_INTERVAL)
     
     times_processed += 1
