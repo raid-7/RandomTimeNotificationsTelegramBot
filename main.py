@@ -9,6 +9,7 @@ import signal
 
 PROCESS_INTERVAL = 10
 WEEK_INTERVAL = 60*60*24*7
+DATASAVE_INTERVAL = 2*60;
 allow_work = True
 
 def sigterm(*args):
@@ -103,6 +104,7 @@ polling_thread.start()
 
 
 start_time = time.time()
+last_save_time = time.time()
 times_processed = 0
 
 def check_need_delay():
@@ -126,6 +128,11 @@ while allow_work:
     
     for line in lines:
         bot.send_message(line.chat_id, line.message, disable_notification=False)
+       
+    if time.time() - last_save_time > DATASAVE_INTERVAL:
+        timesys.save()
+        last_save_time = time.time()
+        print('Saved...')
 
 bot.stop_polling()
 timesys.save()
